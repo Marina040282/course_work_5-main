@@ -74,7 +74,7 @@ class DBManager:
                         CREATE TABLE vacancies (
                             vacancy_id int PRIMARY KEY,
                             employee_id INT REFERENCES employees(employee_id),
-                            name VARCHAR NOT NULL,
+                            name VARCHAR(255) NOT NULL,
                             url VARCHAR(255),
                             area varchar(50),
                             salary_to INTEGER,
@@ -127,4 +127,32 @@ class DBManager:
         data_dict = [{"vacancies": d[0]} for d in data]
         return data_dict
 
+    def insert_employers_vacancies_db(self, data):
+        conn = psycopg2.connect(host=self.host, database=self.database, user=self.user, password=self.password)
+        with conn.cursor() as cur:
+            for item in data:
+                employers = item.get('employers')
+                employee_id = employers[0]
+                name = employers[1]
+                url = str(employers[2])
+                vacancies_url = str(employers[3])
+                area = employers[4]
+                description = employers[5]
+                cur.execute(f"""INSERT INTO employees (employee_id, name, area, description)
+                   VALUES({employee_id}, 'name', {area}, 'текст');""")
+                vacancies = item.get('vacancies')
+                for vacancy in vacancies:
+                    vacancy_id = vacancy[0]
+                    name_vacancy = vacancy[1]
+                    url_vacancy = vacancy[2]
+                    area_vacancy = vacancy[3]
+                    salary_to = vacancy[4]
+                    salary_from = vacancy[5]
+                    requirements = vacancy[6]
+                    print(requirements)
+                    cur.execute(f"""INSERT INTO vacancies(vacancy_id, employee_id, name, url, area, salary_to,
+                                       salary_from, requirements)
+                    VALUES({vacancy_id},{employee_id}, {name_vacancy}, {url_vacancy}, {area_vacancy}, {salary_to}, {salary_from}, {requirements});""")
+            conn.commit()
 
+        conn.close()
