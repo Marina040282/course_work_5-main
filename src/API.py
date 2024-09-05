@@ -61,7 +61,9 @@ class HeadHunterAPI(API):
                         )
 
                         new_vacancy_dict = new_vacancy.dict_vacancy()
-                        vacancies_data.append(new_vacancy_dict)
+                        if not new_vacancy_dict in vacancies_data:
+                            vacancies_data.append(new_vacancy_dict)
+
         return vacancies_data
 
     def get_employers_vacancies(self):
