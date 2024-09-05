@@ -138,8 +138,8 @@ class DBManager:
                 vacancies_url = str(employers[3])
                 area = employers[4]
                 description = employers[5]
-                cur.execute(f"""INSERT INTO employees (employee_id, name, area, description)
-                   VALUES({employee_id}, 'name', {area}, 'текст');""")
+                cur.execute('INSERT INTO employees  (employee_id, name, url, vacancies_url,  area, description) VALUES (%s, %s, %s, %s, %s, %s)',
+                           (employee_id, name, url, vacancies_url, area, description))
                 vacancies = item.get('vacancies')
                 for vacancy in vacancies:
                     vacancy_id = vacancy[0]
@@ -150,9 +150,10 @@ class DBManager:
                     salary_from = vacancy[5]
                     requirements = vacancy[6]
                     print(requirements)
-                    cur.execute(f"""INSERT INTO vacancies(vacancy_id, employee_id, name, url, area, salary_to,
-                                       salary_from, requirements)
-                    VALUES({vacancy_id},{employee_id}, {name_vacancy}, {url_vacancy}, {area_vacancy}, {salary_to}, {salary_from}, {requirements});""")
+                    cur.execute(
+                        'INSERT INTO vacancies (vacancy_id, employee_id, name, url, area, salary_to, salary_from, requirements) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                        (vacancy_id, employee_id, name_vacancy, url_vacancy, area_vacancy, salary_to, salary_from,
+                         requirements))
             conn.commit()
 
         conn.close()
